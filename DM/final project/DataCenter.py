@@ -87,3 +87,15 @@ class DataCenter(object):
 		"""
 		p = JSONCheckInParser()
 		self.checkin = p.getCheckIns(path)
+
+	def getUserData(self):
+		return self.users
+
+	def getBusinessData(self):
+		return self.business
+
+	def getReviewData(self):
+		return self.reviews
+
+	def getCheckInData(self):
+		return self.checkin

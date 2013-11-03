@@ -15,7 +15,7 @@ if __name__ == '__main__':
     dataCenter = DataCenter()
     dataCenter.loadAll(upath,bpath,rpath,cpath)
 
-    print len(dataCenter.users)
-    print len(dataCenter.business)
-    print len(dataCenter.reviews)
-    print len(dataCenter.checkin)
+    print len(dataCenter.getUserData())
+    print len(dataCenter.getBusinessData())
+    print len(dataCenter.getReviewData())
+    print len(dataCenter.getCheckInData())
