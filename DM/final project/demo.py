@@ -1,4 +1,5 @@
 from DataCenter import DataCenter
+from DataUtil import *
 
 if __name__ == '__main__':
     """
@@ -28,3 +29,5 @@ if __name__ == '__main__':
     print len(business)
     print len(reviews)
     print len(checkIn)
+
+    print getUserArray(users)[0]
