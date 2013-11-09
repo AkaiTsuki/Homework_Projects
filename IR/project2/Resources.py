@@ -26,18 +26,9 @@ class Resources(object):
 				stem, words = line.split('|')
 				wordList = words.split()
 				for w in wordList:
-					self.stemClasses[w] = stem
+					self.stemClasses[w.strip()] = stem.strip()
 
 
-if __name__ == '__main__':
-	r = Resources()
 
-	r.loadStopList('stoplist.txt')
-	#print r.stoplist
-
-	r.loadDocList('doclist.txt')
-	#print r.doclist
-
-	r.loadStemClasses('stem-classes.lst.txt')
 
 	
