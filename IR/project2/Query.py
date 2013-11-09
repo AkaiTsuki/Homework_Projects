@@ -7,7 +7,6 @@ class Query(object):
 		super(Query, self).__init__()
 		self.id = id;
 		self.terms = []
-		self.oktf = {}
 
 	def addTerm(self,term):
 		if not self.filter(term):
@@ -16,16 +15,7 @@ class Query(object):
 	def filter(self,term):
 		return term in Query.INVALID_TERM1
 
-	def caculateOKTF(self,avgLen):
-		for term in self.terms:
-			oktf = self.caculateTermOKTF(term,avgLen)
-			self.oktf[term] = oktf
-
-	def caculateTermOKTF(self,term,avgLen):
-		tf = self.getTermFrequency(term)
-		return tf/(tf+0.5+((1.5 * self.getDocLen())/avgLen))
-
-	def getDocLen(self):
+	def length(self):
 		return len(self.terms)
 
 	def getTermFrequency(self,term):
@@ -36,4 +26,4 @@ class Query(object):
 		return count
 
 	def __str__(self):
-		return "[%s %s] \n %s" % (self.id,self.terms,self.oktf)
+		return "[%s %s]" % (self.id,self.terms)

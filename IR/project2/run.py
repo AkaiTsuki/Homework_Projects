@@ -1,40 +1,27 @@
 from Resources import Resources
-from QueryParser import QueryParser
-from SpaceVectorModel import SpaceVectorModel
-from InvertListParser import InvertListParser
-import operator
 
-def outputRanks(ranks,queryNum,doclist):
-	sorted_ranks = sorted(ranks.iteritems(), key=operator.itemgetter(1),reverse=True)
-	top1000 = sorted_ranks[:1000]
-	r = []
-	rank =1
-	for item in top1000:
-		docid = doclist[item[0]]
-		score = item[1]
-		r.append([queryNum,"Q0",docid,rank,score,"EXP"])
-		rank +=1
-	return r
+from Application import Application
 
 if __name__ == '__main__':
-	r = Resources()
-	r.loadStopList('stoplist.txt')
-	r.loadDocList('doclist.txt')
-	r.loadStemClasses('stem-classes.lst.txt')
+	# input parameter
+	queryfile = "desc.51-100.short.txt"
+	model = 1
+	database = 3
+	outputfile = "model1.txt"
 
-	q = QueryParser('desc.51-100.short.txt')
-	raw_lst = q.load()
-	lst=q.process(raw_lst, r.stoplist, r.stemClasses)
-	querys = q.generateQueryList(lst)
+	# System file parameter
+	docfile ="doclist.txt"
+	stemfile ='stem-classes.lst.txt'
+	stopfile ="stoplist.txt"
 
-	spaceVector = SpaceVectorModel(querys)
-	spaceVector.caculateQueryOKTFs()
+	# Loading the resources
+	resources = Resources()
+	resources.loadDocList(docfile)
+	resources.loadStemClasses(stemfile)
+	resources.loadStopList(stopfile)
+	resources.loadQuerys(queryfile)
 
-	output = []
-	for q in spaceVector.querys:
-		ranks = spaceVector.getRankedDocuments(q)
-		qoutput = outputRanks(ranks,q.id,r.doclist)
-		output += qoutput
-		
-	for o in output:
-		print o[0],o[1],o[2],o[3],o[4],o[5]
+	#Create Applications based on input parameter
+	app = Application(resources,model,database,outputfile)
+
+	app.run()

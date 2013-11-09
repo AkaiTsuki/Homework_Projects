@@ -1,3 +1,5 @@
+from QueryParser import QueryParser
+
 class Resources(object):
 	"""Saving all resources for the project"""
 	def __init__(self):
@@ -8,6 +10,8 @@ class Resources(object):
 		self.stoplist = []
 		# list of stem words. The key is original word, the value is stem word.
 		self.stemClasses = {}
+		# list of querys
+		self.querys =[]
 
 	def loadDocList(self,path):
 		with open(path) as f:
@@ -27,6 +31,22 @@ class Resources(object):
 				wordList = words.split()
 				for w in wordList:
 					self.stemClasses[w.strip()] = stem.strip()
+
+	def loadQuerys(self,path):
+		# Parse the query file
+		queryParser = QueryParser(path)
+		raw = queryParser.load()
+		cleanedRaw = queryParser.process(raw, self.stoplist,self.stemClasses)
+		# querys is a list of Query
+		self.querys = queryParser.generateQueryList(cleanedRaw)
+
+	def caculateQueryAvgLength(self):
+		total = 0
+
+		for q in self.querys:
+			total += q.length()
+		
+		return total/len(self.querys)
 
 
 
