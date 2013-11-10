@@ -25,8 +25,8 @@ class InvertListParser(object):
 		summary = invertListArray[:2];
 		detail = invertListArray[2:]
 
-		invertList.ctf = summary[0]
-		invertList.df = summary[1]
+		invertList.ctf = int(summary[0])
+		invertList.df = int(summary[1])
 
 		for i in range(len(detail)):
 			if i%3 == 0:

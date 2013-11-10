@@ -2,8 +2,9 @@ from QueryParser import QueryParser
 
 class Resources(object):
 	"""Saving all resources for the project"""
-	def __init__(self):
+	def __init__(self,db):
 		super(Resources, self).__init__()
+		self.db = db
 		# saving the relationship between external id and internal id
 		self.doclist = {}
 		# list of stop words
@@ -12,6 +13,21 @@ class Resources(object):
 		self.stemClasses = {}
 		# list of querys
 		self.querys =[]
+
+		# db information
+		self.db_num_docs = 0
+		self.db_num_terms = 0
+		self.db_num_unique_terms = 0
+		self.db_ave_doclen = 0
+
+		self.dbinfo()
+
+	def dbinfo(self):
+		if self.db==3:
+			self.db_num_docs = 84678
+			self.db_num_terms = 24401877
+			self.db_num_unique_terms = 166054
+			self.db_ave_doclen = 288
 
 	def loadDocList(self,path):
 		with open(path) as f:
@@ -47,6 +63,14 @@ class Resources(object):
 			total += q.length()
 		
 		return total/len(self.querys)
+
+	def getTermDF(self,term):
+		df = 0;
+		for q in self.querys:
+			if term in q.terms:
+				df += 1
+		return df
+
 
 
 

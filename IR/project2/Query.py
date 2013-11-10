@@ -2,6 +2,7 @@ class Query(object):
 	"""docstring for Query"""
 	INVALID_TERM = ['document','detat','u.s.']
 	INVALID_TERM1 = ['document','discuss','report','include','identify','cite','describe']
+	INVALID_TERM2 =[]
 
 	def __init__(self, id):
 		super(Query, self).__init__()

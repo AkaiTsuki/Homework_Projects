@@ -1,4 +1,6 @@
 from OKTF import OKTF
+from OKTFIDF import OKTFIDF
+from MaxLikelihood import MaxLikelihood
 import operator
 
 class Application(object):
@@ -13,6 +15,10 @@ class Application(object):
 	def loadModel(self):
 		if self.model==1:
 			return OKTF(self.resources,self.resources.querys,self.db)
+		elif self.model==2:
+			return OKTFIDF(self.resources,self.resources.querys,self.db)
+		elif self.model==3:
+			return MaxLikelihood(self.resources,self.db)
 		else:
 			return None
 
@@ -50,4 +56,13 @@ class Application(object):
 			count+=1
 
 		self.writeToFile(output)
+
+	def test(self):
+		model = self.loadModel()
+		for q in self.resources.querys:
+			model.setQuery(q)
+			model.rank()
+
+
+
 		
