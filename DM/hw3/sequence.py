@@ -7,6 +7,17 @@ class Sequence(object):
 		self.seq = []
 		#self.parseSequence(linedata)
 
+	def prune(self,freqItems,min_sup):
+		seq = Sequence()
+		for ele in self.seq:
+			newEle = []
+			for item in ele:
+				if freqItems[item] >= min_sup:
+					newEle.append(item)
+			if len(newEle) > 0:
+				seq.seq.append(newEle)
+		return seq
+
 	def parseSequence(self,data):
 		start =1
 		while start<len(data):

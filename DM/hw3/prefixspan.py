@@ -8,7 +8,7 @@ class PrefixSpan(object):
 		super(PrefixSpan, self).__init__()
 		self.path = path
 		self.min_sup = min_sup
-		self.debug =0
+		self.debug =1
 		self.outputFile = outputFile
 		self.seqSize = 0
 		self.results = []
@@ -26,6 +26,15 @@ class PrefixSpan(object):
 		self.min_sup = len(db) * min_sup
 		self.seqSize = len(db)
 		return db
+
+	def pruneDB(self,db,freqItems):
+		newDB = []
+		for i in range(len(db)):
+			seq = db[i]
+			s=seq.prune(freqItems,self.min_sup)
+			if len(s.seq)>0:
+				newDB.append(s)
+		return newDB
 
 	def printdb(self,db):
 		for s in db:
@@ -51,7 +60,7 @@ class PrefixSpan(object):
 		for k,v in iList.iteritems():
 			if v>=self.min_sup:
 				seqPattern = self.join(accu,k)
-				rs = self.format(seqPattern,v)
+				rs = self.format1(seqPattern,v)
 				print rs
 				self.outFile.write(rs+"\n")
 				#self.results.append(rs)
@@ -101,6 +110,18 @@ class PrefixSpan(object):
 		freqStr = "%.6f" % freqPortion
 		return accuStr+": "+ freqStr
 
+	def format1(self,accu,freq):
+		accuStr=""
+
+		for ele in accu:
+			accuStr+=str(ele)+' '
+
+		accuStr = accuStr.replace('[','(').replace(']',')').replace(',','')
+
+		freqPortion = freq*1.0/self.seqSize
+		freqStr = "%.6f" % freqPortion
+		return accuStr+": "+ str(freq)
+
 	def printSequentialPattern(self,seqPatter,freq):
 		pass
 
@@ -120,9 +141,9 @@ class PrefixSpan(object):
 			db = self.load(min_sup)
 			print "Finish Load DB."
 			freqItems = self.caculateFreqItems(-99999,db)
-
-			self.log(db,1)
-			self.prefixSpan(freqItems,db,[])
+			newDB=self.pruneDB(db, freqItems)
+			self.log(newDB,1)
+			self.prefixSpan(freqItems,newDB,[])
 			
 		finally:
 			self.outFile.close()
