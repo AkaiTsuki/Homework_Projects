@@ -1,5 +1,6 @@
 from sets import Set
 
+
 class Sequence(object):
 	"""docstring for Sequence"""
 	def __init__(self):
@@ -63,7 +64,9 @@ class Sequence(object):
 	def checkPrefix(self,prefixLastELement,e,pos):
 		i = len(prefixLastELement)-1
 		j = pos
-
+		
+		
+		
 		while i>=0:
 			if j== -1:
 				return False
@@ -73,7 +76,7 @@ class Sequence(object):
 				i-=1
 				j-=1
 		return True
-
+		
 
 	def getProjectSequence(self,prefix,accu):
 		postfix = []
@@ -102,9 +105,9 @@ class Sequence(object):
 			postfix[0] = newEle
 			return postfix
 	
-	def getUniqueItems(self,prefix):
+	def getUniqueItems(self,prefix,accu):
 		items = Set()
-
+		#print 'get unique items prefix:', prefix
 		for i in range(len(self.seq)):
 			e = self.seq[i]
 			# two types of prefix y
@@ -118,10 +121,18 @@ class Sequence(object):
 						items.add(item)
 					else:				
 						items.add(item)
-						if item == prefix:
+						#print "accu last:",accu[-1]
+						#print "Current element:" ,e
+						if item == prefix and self.checkPrefix(accu[-1],e,j):
+							#print "ssssssss",item
 							pointer = j
-						if j > pointer:		
+						if j>pointer and item>0:
+							#print "Add item",-item
 							items.add(-item)
+						#if item == prefix:
+						#	pointer = j
+						#if j > pointer and item>0:		
+						#	items.add(-item)
 				pointer = 99999
 				# (_y)
 			else:
@@ -129,9 +140,9 @@ class Sequence(object):
 				for j in range(len(e)):
 					item = e[j]
 					items.add(item)
-					if item == abs(prefix):
+					if item == abs(prefix) and self.checkPrefix(accu[-1],e,j):
 						pointer = j
-					if j>pointer:
+					if j > pointer and item>0:		
 						items.add(-item)
 
 				pointer = 99999

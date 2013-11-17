@@ -8,7 +8,7 @@ class PrefixSpan(object):
 		super(PrefixSpan, self).__init__()
 		self.path = path
 		self.min_sup = min_sup
-		self.debug =1
+		self.debug =0
 		self.outputFile = outputFile
 		self.seqSize = 0
 		self.results = []
@@ -60,20 +60,21 @@ class PrefixSpan(object):
 		for k,v in iList.iteritems():
 			if v>=self.min_sup:
 				seqPattern = self.join(accu,k)
-				rs = self.format1(seqPattern,v)
+				rs = self.format(seqPattern,v)
 				print rs
 				self.outFile.write(rs+"\n")
 				#self.results.append(rs)
 				projectdb=self.projectDb(k, project, seqPattern)
 				self.log(str(k)+"-Project DB:")
 				self.log(projectdb,1)
-				freqItems = self.caculateFreqItems(k,projectdb)
+				freqItems = self.caculateFreqItems(k,projectdb,seqPattern)
+				#print freqItems
 				self.prefixSpan(freqItems,projectdb,seqPattern)
 
-	def caculateFreqItems(self,prefix,db):
+	def caculateFreqItems(self,prefix,db,accu):
 		freqItems = {}
 		for seq in db:
-			items = seq.getUniqueItems(prefix)
+			items = seq.getUniqueItems(prefix,accu)
 			for k in items:
 				freqItems[k] = freqItems.get(k,0) + 1
 
@@ -140,7 +141,7 @@ class PrefixSpan(object):
 			print "Start Load DB."
 			db = self.load(min_sup)
 			print "Finish Load DB."
-			freqItems = self.caculateFreqItems(-99999,db)
+			freqItems = self.caculateFreqItems(-99999,db,[])
 			newDB=self.pruneDB(db, freqItems)
 			self.log(newDB,1)
 			self.prefixSpan(freqItems,newDB,[])
