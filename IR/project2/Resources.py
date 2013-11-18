@@ -28,6 +28,21 @@ class Resources(object):
 			self.db_num_terms = 24401877
 			self.db_num_unique_terms = 166054
 			self.db_ave_doclen = 288
+		elif self.db ==2:
+			self.db_num_docs = 84678
+			self.db_num_terms = 24401877
+			self.db_num_unique_terms = 207224
+			self.db_ave_doclen = 288
+		elif self.db==1:
+			self.db_num_docs = 84678
+			self.db_num_terms = 41802513
+			self.db_num_unique_terms = 166242
+			self.db_ave_doclen = 493
+		elif self.db==0:
+			self.db_num_docs = 84678
+			self.db_num_terms = 41802513
+			self.db_num_unique_terms = 207615
+			self.db_ave_doclen = 493
 
 	def loadDocList(self,path):
 		with open(path) as f:
@@ -50,7 +65,7 @@ class Resources(object):
 
 	def loadQuerys(self,path):
 		# Parse the query file
-		queryParser = QueryParser(path)
+		queryParser = QueryParser(path,self.db)
 		raw = queryParser.load()
 		cleanedRaw = queryParser.process(raw, self.stoplist,self.stemClasses)
 		# querys is a list of Query

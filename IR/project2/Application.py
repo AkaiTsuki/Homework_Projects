@@ -1,6 +1,8 @@
 from OKTF import OKTF
 from OKTFIDF import OKTFIDF
 from MaxLikelihood import MaxLikelihood
+from JelinekMercer import JelinekMercer
+from BM25V1 import BM25V1
 import operator
 
 class Application(object):
@@ -19,6 +21,10 @@ class Application(object):
 			return OKTFIDF(self.resources,self.resources.querys,self.db)
 		elif self.model==3:
 			return MaxLikelihood(self.resources,self.db)
+		elif self.model ==4:
+			return JelinekMercer(self.resources,self.db)
+		elif self.model ==5:
+			return BM25V1(self.resources,self.db)
 		else:
 			return None
 

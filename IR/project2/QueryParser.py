@@ -4,9 +4,10 @@ class QueryParser(object):
 	"""docstring for Query"""
 	signs = [',','.','\'','-']
 
-	def __init__(self, path):
+	def __init__(self, path,db):
 		super(QueryParser, self).__init__()
 		self.path = path
+		self.db = db
 
 	def load(self):
 		"""
@@ -81,6 +82,8 @@ class QueryParser(object):
 	def process(self,raw_lst,stoplist,stemList):
 		lst = self.removeSpecialCharacters(raw_lst)
 		lst = self.getWords(lst)
+		#if self.db == 2 or self.db == 3:
 		lst = self.removeStops(lst,stoplist)
+		#if self.db == 1 or self.db == 3:
 		lst = self.processStem(lst, stemList)
 		return lst
