@@ -1,6 +1,6 @@
 from Query import Query
 from bs4 import BeautifulSoup
-from TextFilter import TextFilter
+from common.TextFilter import TextFilter
 import string
 
 class QueryParser(object):

@@ -1,5 +1,5 @@
 from QueryParser import QueryParser
-from Resource import *
+from common.Resource import *
 
 class Resources(object):
 	"""Saving all resources for the project"""

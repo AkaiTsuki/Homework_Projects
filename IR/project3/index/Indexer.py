@@ -1,8 +1,8 @@
 from os import listdir
 from os.path import isfile, join, splitext
 from FileReader import FileReader
-from Resource import *
-from TextFilter import TextFilter
+from common.Resource import *
+from common.TextFilter import TextFilter
 from Document import Document
 
 class Indexer(object):

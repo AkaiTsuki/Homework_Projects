@@ -1,12 +1,13 @@
-from Lemur import Lemur
-from Resources import Resources
-from Application import Application
+from query.Resources import Resources
+from query.Application import Application
 import sys
 
 def main():
 	database = 4
 	model = int(sys.argv[1])
 	outputfile = sys.argv[2]
+	#model = 1
+	#outputfile = 'outputTest.txt'
 
 	queryfile = "cacm.query"
 	docfile ="doclist.txt"
