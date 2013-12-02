@@ -49,6 +49,11 @@ class Resources(object):
 			self.db_num_terms = 164420
 			self.db_num_unique_terms = 12112
 			self.db_ave_doclen = 51
+		elif self.db==5:
+			self.db_num_docs = 3204
+			self.db_num_terms = 241662
+			self.db_num_unique_terms = 12384
+			self.db_ave_doclen = 75
 
 	def loadDocList(self,path):
 		with open(path) as f:
@@ -62,11 +67,12 @@ class Resources(object):
 	def loadStemClasses(self,path):
 		self.stemClasses = Stemming(path)
 
-	def loadQuerys(self,path):
+	def loadQuerys(self,path,type):
 		# Parse the query file
 		queryParser = QueryParser(path,self.db)
-		self.querys = queryParser.load(self.stoplist,self.stemClasses)
+		self.querys = queryParser.load(self.stoplist,self.stemClasses,type)
 		
+
 		#cleanedRaw = queryParser.process(raw, self.stoplist,self.stemClasses)
 		# querys is a list of Query
 		#self.querys = queryParser.generateQueryList(cleanedRaw)

@@ -3,7 +3,7 @@ from query.Application import Application
 import sys
 
 def main():
-	database = 4
+	database = 5
 	model = int(sys.argv[1])
 	outputfile = sys.argv[2]
 	
@@ -19,7 +19,7 @@ def main():
 	resources.loadDocList(docfile)
 	resources.loadStemClasses(stemfile)
 	resources.loadStopList(stopfile)
-	resources.loadQuerys(queryfile,1)
+	resources.loadQuerys(queryfile,0)
 
 	app = Application(resources,model,database,outputfile)
 	app.run()

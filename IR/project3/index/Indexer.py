@@ -3,18 +3,25 @@ from os.path import isfile, join, splitext
 from FileReader import FileReader
 from common.Resource import *
 from common.TextFilter import TextFilter
+from common.NonStopTextFilter import NonStopTextFilter
 from Document import Document
 
 class Indexer(object):
 	"""docstring for Indexer"""
-	def __init__(self, stopPath,stemPath,docDir):
+	def __init__(self, stopPath,stemPath,docDir,hasStop):
 		super(Indexer, self).__init__()
 		self.stopList = StopList(stopPath)
 		self.stemClass = Stemming(stemPath)
-		self.textFilter = TextFilter(self.stopList,self.stemClass)
+		self.textFilter = self.getTextFilter(hasStop)
 		self.docDir = docDir
 		self.docList = self.__getAllDocFiles__()
 		self.docTotalNum = len(self.docList)
+
+	def getTextFilter(self,type):
+		if type == 1:
+			return TextFilter(self.stopList,self.stemClass)
+		else:
+			return NonStopTextFilter(self.stopList,self.stemClass)
 
 	def index(self,docs):
 		"""

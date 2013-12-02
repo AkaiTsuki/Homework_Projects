@@ -12,12 +12,12 @@ class QueryParser(object):
 		self.path = path
 		self.db = db
 
-	def load(self,stop,stem):
+	def load(self,stop,stem,type):
 		"""
 		load query from file, returns a raw query list for 
 		further processing.
 		"""
-		raw_lst = []
+
 		tfilter=TextFilter(stop,stem)
 
 		htmldoc = ""
@@ -32,7 +32,8 @@ class QueryParser(object):
 			content = doc.contents[2].encode('utf8')
 			content = content.split()
 			content = tfilter.removePunctuation(content)
-			content = tfilter.removeStop(content)
+			if type==1:
+				content = tfilter.removeStop(content)
 			content = tfilter.convertStem(content)
 			query = [docno]+content
 			querys.append(self.getQuery(query))

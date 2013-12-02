@@ -3,7 +3,7 @@ from index.Database import Database
 
 if __name__ == '__main__':
 
-	hasStop = 1
+	hasStop = 0
 
 	indexer = Indexer("stoplist.txt","k_loose.stemclass","cacm",hasStop)
 	docs = indexer.getDocuments()
