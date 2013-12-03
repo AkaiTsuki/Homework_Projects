@@ -30,4 +30,4 @@ if __name__ == '__main__':
 	print 'Finished'
 	
 	db.reviewToFile(rout)
-	db.ratingReport(uout,bout)	
+	db.ratingReport(uout,bout)

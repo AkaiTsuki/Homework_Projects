@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
 	parser = ReviewTxtParser()
 	reviews = parser.getReviews("dataset/reviews.txt")
-	tests = parser.getReviews("dataset/test10p.txt")
+	tests = parser.getReviews("dataset/test1000.txt")
 
 	print 'total %d tests to run.' % (len(tests))
 

@@ -1,5 +1,6 @@
 from sets import Set
 import operator
+import random
 
 class Database(object):
 	"""docstring for Database"""
@@ -112,6 +113,30 @@ class Database(object):
 		with open(path,'w') as f:
 			for rid,r in self.getReviews().iteritems():
 				string = "%s %s %d\n" % (r.getUID(),r.getBID(),r.getRate())
+				f.write(string)
+
+	def richReviewToFile(self,rpath,tpath,portion):
+		training = {}
+		test = {}
+		for rid,r in self.getReviews().iteritems():
+			rand = random.randint(1,portion)
+			if rand ==1:
+				test[rid] = r
+			else:
+				training[rid] = r
+
+		with open(rpath,'w') as f:
+			for rid,r in training.iteritems():
+				text = r.getText().replace('\n',' ')
+
+				string = "%s %s %d %s\n" % (r.getUID(),r.getBID(),r.getRate(),text)
+				f.write(string)
+
+		with open(tpath,'w') as f:
+			for rid,r in test.iteritems():
+				text = r.getText().replace('\n',' ')
+
+				string = "%s %s %d %s\n" % (r.getUID(),r.getBID(),r.getRate(),text)
 				f.write(string)
 
 	def __usersRating__(self):
