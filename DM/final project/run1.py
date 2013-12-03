@@ -1,21 +1,18 @@
-from MatrixFactorization import MatrixFactorization
-from App import App
-from ReviewTxtParser import ReviewTxtParser
+from model.MatrixFactorization import MatrixFactorization
+from util.ReviewTxtParser import ReviewTxtParser
 import sys
 
 if __name__ == '__main__':
+	"""
+	This script is for MatrixFactorization model
+	"""
 	K = int(sys.argv[1])
 	Iter = int(sys.argv[2])
 
-	app = App()
-	app.initDB("dataset/reviews.txt",ReviewTxtParser())
-	db = app.getDatabase()
-	reviews = db.getReviews()
+	parser = ReviewTxtParser()
+	reviews = parser.getReviews("dataset/reviews.txt")
+	tests = parser.getReviews("dataset/test10p.txt")
 
-	app1 = App()
-	app1.initDB("dataset/test10p.txt",ReviewTxtParser())
-	db1 = app1.getDatabase()
-	tests = db1.getReviews()
 	print 'total %d tests to run.' % (len(tests))
 
 	mf = MatrixFactorization(reviews,tests)

@@ -1,4 +1,4 @@
-from Review import Review
+from model.Review import Review
 import json
 
 class ReviewJSONParser(object):

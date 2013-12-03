@@ -1,18 +1,17 @@
 import random
-from ReviewTxtParser import ReviewTxtParser
-from App import App
+from util.ReviewTxtParser import ReviewTxtParser
 
 if __name__ == '__main__':
-
+	"""
+	This script will split the test data from training set.
+	NOTE: It will not delete the test data from training set since
+	we still need the test data to create rating matrix.
+	"""
 	testFile = 'test.txt'
 	portion = 10
 
-	app = App()
-	app.initDB("dataset/reviews.txt",ReviewTxtParser())
-	db = app.getDatabase()
-	print db.statistcInfo()
-
-	reviews = db.getReviews()
+	parser = ReviewTxtParser()
+	reviews = parser.getReviews("dataset/reviews.txt")
 	
 	test = {}
 
