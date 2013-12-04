@@ -48,7 +48,8 @@ class MatrixFactorization(object):
 		ER  = numpy.dot(nP,nQ.T)
 		
 		print "Evaluation"
-		e = 0.0
+		rmse = 0.0
+		mae = 0.0
 
 		for rid,r in self.tests.iteritems():
 			uid = r.getUID()
@@ -57,9 +58,11 @@ class MatrixFactorization(object):
 			uIndex = self.uidToIndex[uid]
 			bIndex = self.bidToIndex[bid]
 			eRate = ER[uIndex][bIndex]
-			e += abs(eRate - rate) ** 2
+			rmse += abs(eRate - rate) ** 2
+			mae += abs(eRate - rate)
 		
-		print "RMSE: ", math.sqrt(e/len(self.tests))
+		print "RMSE: ", math.sqrt(rmse/len(self.tests))
+		print "MAE: ", mae/len(self.tests)
 
 
 	def matrix_factorization(self,R, P, Q, K, steps=5000, alpha=0.0002, beta=0.02):

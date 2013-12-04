@@ -111,7 +111,8 @@ class Query(object):
 
 	def predictAll(self,K):
 		oktfidf = OKTFIDF(self.indexes,self.avg_query_len,self.num_doc)
-		e = 0.0
+		rmse = 0.0
+		mae = 0.0
 		count = 1
 		for k,v in self.queries.iteritems():
 			oktfidf.setQuery(v)
@@ -123,11 +124,13 @@ class Query(object):
 				total += self.docRates[int(docid)]
 			er = total / K
 			r = self.tests[k].getRate()
-			e += abs(er - r) ** 2
+			rmse += abs(er - r) ** 2
+			mae += abs(er-r)
 			print "%d %s %f %f" % (count,k, er, r)
 			count+=1
 
-		print "RMSE: ", math.sqrt(e/len(self.tests))
+		print "RMSE: ", math.sqrt(rmse/len(self.tests))
+		print "MAE: ", mae/len(self.tests)
 
 	def initQueries(self):
 		total = 0

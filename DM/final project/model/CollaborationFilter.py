@@ -41,7 +41,8 @@ class CollaborationFilter(object):
 	def run(self,K):
 		self.splitTestSet()
 
-		e = 0.0
+		rmse = 0.0
+		mae = 0.0
 		count = 0
 		for rid,r in self.tests.iteritems():
 			uid = r.getUID()
@@ -50,11 +51,13 @@ class CollaborationFilter(object):
 			uIndex = self.uidToIndex[uid]
 			bIndex = self.bidToIndex[bid]
 			er = self.predictRate(uIndex,bIndex,K)
-			e += abs(er - rate)**2
+			rmse += abs(er - rate)**2
+			mae += abs(er-rate)
 			count+=1
 			print "%d %f %f" % (count,er,rate)
 
-		print "RMSE: ", math.sqrt(e/len(self.tests))
+		print "RMSE: ", math.sqrt(rmse/len(self.tests))
+		print "MAE: ", mae/len(self.tests)
 
 	def predictRate1(self,uInx,bInx,K):
 		r_users = self.getRelatedUsers(uInx,bInx)
