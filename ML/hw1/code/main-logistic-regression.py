@@ -1,36 +1,26 @@
 __author__ = 'jiachiliu'
 
 from common.normalizer import *
-from model.ClassificationTree import *
-from common.validation import rmse
-from common.validation import mae
-from common.validation import mse
+from model.LinearRegression import *
 
+def runClassifier(train, test):
 
-def printTree(root):
-    if root:
-        print root
-        printTree(root.left)
-        printTree(root.right)
+    label = 58
+    featuresCols = range(58)
 
+    lr = LinearRegression(train, featuresCols, label)
+    coeff = lr.build()
 
-def runClassifier(train, test, maxLevel):
-    label = 57
-    featuresCols = range(57)
-
-    cart = ClassificationTree(train, featuresCols, label, {}, maxLevel)
-    root = cart.build()
-    print '=================Tree==============='
-    printTree(root)
+    # Training error rates
+    features = lr.constructX(train, featuresCols)
+    actualLabel = lr.constructY(train, label)
+    predLabel = lr.predict(features, coeff, False)
 
     print '=============Train Data Result============'
-    actualLabel = train[:, label]
     actPositive = len(actualLabel[actualLabel == 1])
     actNegtive = len(actualLabel[actualLabel == 0])
-    predLabel = cart.predict(train, root)
     predPositive = len(predLabel[predLabel == 1])
     predNegative = len(predLabel[predLabel == 0])
-
     print "actPositive: ", actPositive, " actNeg: ", actNegtive, " predPos: ", predPositive, "predNeg: ", predNegative
 
     missClass = 0
@@ -42,10 +32,12 @@ def runClassifier(train, test, maxLevel):
     print "Total data: ", len(actualLabel), "Total error: ", missClass, "accuracy: ", trainAcc
 
     print '=============Test Data Result============'
-    actualLabel = test[:, label]
+    features = lr.constructX(test, featuresCols)
+    actualLabel = lr.constructY(test, label)
     actPositive = len(actualLabel[actualLabel == 1])
     actNegtive = len(actualLabel[actualLabel == 0])
-    predLabel = cart.predict(test, root)
+
+    predLabel = lr.predict(features, coeff, False)
     predPositive = len(predLabel[predLabel == 1])
     predNegative = len(predLabel[predLabel == 0])
     print "actPositive: ", actPositive, " actNeg: ", actNegtive, " predPos: ", predPositive, "predNeg: ", predNegative
@@ -59,10 +51,14 @@ def runClassifier(train, test, maxLevel):
 
     return trainAcc, testAcc
 
-
 def main():
     processor = DataProcessor()
     data = processor.readData('data/spambase.data', ',', float)
+    scaler = ZeroMeanUnitVariation([0,1,2,7,9,10,11,12])
+    # scaler = MinMaxScaler([0, 1, 2, 7, 9, 10, 11, 12])
+    processor.normalize(data, scaler)
+    data = processor.appendNewColumn(data, 1.0, 0)
+
     K = 10
     par = len(data) / K
 
@@ -82,15 +78,13 @@ def main():
         test = data[testIndices]
 
         print "Run Classifier on batch ", i
-        tr, te = runClassifier(train, test, 4)
+        tr, te = runClassifier(train, test)
         trainAcc += tr
         testAcc += te
 
     print "average Train Acc: ", trainAcc / K
     print "average Test Acc: ", testAcc / K
 
-    # processor.normalize(data, MinMaxScaler([0,1,2,7,9,10,11,12]))
-
-
 if __name__ == '__main__':
     main()
+
