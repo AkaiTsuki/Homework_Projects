@@ -1,7 +1,7 @@
 __author__ = 'jiachiliu'
 
 import numpy as np
-
+import logging
 
 def print_tree(root):
     if root:
@@ -46,7 +46,7 @@ class BaseTree:
         return self
 
     def build_tree(self, train, target, features, level):
-        print "train size: ", len(train), "features: ", features, "level: ", level
+        logging.info("Train data size: %d, feature length: %d", len(train), len(features))
 
         if self.is_all_same_label(target):
             return TreeNode(None, None, self.total_features, target[0], level)
@@ -58,7 +58,7 @@ class BaseTree:
             return TreeNode(None, None, self.total_features, self.majority_vote(target), level)
 
         (f, s) = self.find_best_split_feature(train, target, features)
-
+        logging.info("(best_feature, split_value) = (%d, %f)", f, s)
         if f is None:
             return TreeNode(None, None, self.total_features, self.majority_vote(target), level)
 
@@ -67,7 +67,7 @@ class BaseTree:
         left_target = target[train[:, f] <= s]
         right_target = target[train[:, f] > s]
 
-        print "(best_feature, split_val): ", (f, s), "data split: ", (len(left_target), len(right_target))
+        logging.info("data split[left = %d, right = %d]", len(left_target), len(right_target))
 
         if len(left_train) == 0:
             left_tree = TreeNode(None, None, self.total_features, self.majority_vote(target), level)
@@ -93,7 +93,6 @@ class BaseTree:
                 max_info_gain = info_gain
                 best_feature = f
                 best_split_value = split
-        print "best_feature: ", best_feature, "max info gain: ", max_info_gain
         return best_feature, best_split_value
 
     def find_best_split_on_feature(self, feature_vals, target, entropy_d):
@@ -152,42 +151,6 @@ class BaseTree:
 class DecisionTree(BaseTree):
     def __init__(self):
         BaseTree.__init__(self)
-    #
-    # def find_best_split_feature(self, train, target, features):
-    #     best_feature = None
-    #     best_split_value = None
-    #     max_info_gain = -float('inf')
-    #     entropy_d = self.entropy(target)
-    #
-    #     for f in features:
-    #         (split, info_gain) = self.find_best_split_on_feature(train[:, f], target, entropy_d)
-    #         if max_info_gain <= info_gain:
-    #             max_info_gain = info_gain
-    #             best_feature = f
-    #             best_split_value = split
-    #     print "best_feature: ", best_feature, "max info gain: ", max_info_gain
-    #     return best_feature, best_split_value
-    #
-    # def find_best_split_on_feature(self, feature_vals, target, entropy_d):
-    #     max_info_gain = -float('inf')
-    #     best_split_val = None
-    #     sorted_features, sorted_target = self.get_sorted_feature_and_target(feature_vals, target)
-    #
-    #     for i in range(1, len(sorted_features)):
-    #         if sorted_features[i] == sorted_features[i - 1]:
-    #             continue
-    #         split = (sorted_features[i] + sorted_features[i - 1]) / 2.0
-    #         left = sorted_target[:i]
-    #         right = sorted_target[i:]
-    #         entropy_d_left = (1.0 * len(left) / len(sorted_target)) * self.entropy(left)
-    #         entropy_d_right = (1.0 * len(right) / len(sorted_target)) * self.entropy(right)
-    #         info_gain = entropy_d - (entropy_d_left + entropy_d_right)
-    #
-    #         if max_info_gain <= info_gain:
-    #             max_info_gain = info_gain
-    #             best_split_val = split
-    #
-    #     return best_split_val, max_info_gain
 
     def measure_on_children(self, left, right, target, parent_score):
         score_left = (1.0 * len(left) / len(target)) * self.measure(left)
@@ -229,43 +192,6 @@ class DecisionTree(BaseTree):
 class RegressionTree(BaseTree):
     def __init__(self):
         BaseTree.__init__(self)
-
-    #
-    # def find_best_split_feature(self, train, target, features):
-    #     best_feature = None
-    #     best_split_value = None
-    #     max_info_gain = -float('inf')
-    #     sse_d = self.sum_square_error(target)
-    #
-    #     for f in features:
-    #         (split, info_gain) = self.find_best_split_on_feature(train[:, f], target, sse_d)
-    #         if max_info_gain <= info_gain:
-    #             max_info_gain = info_gain
-    #             best_feature = f
-    #             best_split_value = split
-    #     print "best_feature: ", best_feature, "max info gain: ", max_info_gain
-    #     return best_feature, best_split_value
-    #
-    # def find_best_split_on_feature(self, feature_vals, target, sse_d):
-    #     max_info_gain = -float('inf')
-    #     best_split_val = 0.0
-    #     sorted_features, sorted_target = self.get_sorted_feature_and_target(feature_vals, target)
-    #
-    #     for i in range(1, len(sorted_features)):
-    #         if sorted_features[i] == sorted_features[i - 1]:
-    #             continue
-    #         split = (sorted_features[i] + sorted_features[i - 1]) / 2.0
-    #         left = sorted_target[:i]
-    #         right = sorted_target[i:]
-    #         sse_left = self.sum_square_error(left)
-    #         sse_right = self.sum_square_error(right)
-    #         info_gain = sse_d - (sse_left + sse_right)
-    #
-    #         if max_info_gain <= info_gain:
-    #             max_info_gain = info_gain
-    #             best_split_val = split
-    #
-    #     return best_split_val, max_info_gain
 
     def measure(self, target):
         sse = 0.0
