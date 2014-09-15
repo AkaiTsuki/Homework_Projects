@@ -2,13 +2,20 @@ __author__ = 'jiachiliu'
 
 from nulearn.preprocessing import normalize
 from nulearn.dataset import load_boston_house
+from nulearn.dataset import load_spambase
 from nulearn.linear_model import LinearRegression
+from nulearn.linear_model import LogisticRegression
 from nulearn.validation import mae
 from nulearn.validation import mse
 from nulearn.validation import rmse
+from nulearn import cross_validation
+import numpy as np
+from nulearn.validation import confusion_matrix
+from nulearn.validation import confusion_matrix_analysis
+import sys
 
 
-def linear_regression():
+def housing():
     train, train_target, test, test_target = load_boston_house()
 
     normalize_columns = [0, 1, 2, 6, 7, 9, 10, 11, 12]
@@ -27,9 +34,71 @@ def linear_regression():
     print "mse: ", mse(predict, test_target), " rmse: ", rmse(predict, test_target), " mae: ", mae(predict, test_target)
 
 
-def main():
-    linear_regression()
+def spam():
+    train, target = load_spambase()
 
+    normalize_columns = [55, 56]
+    normalize(train, normalize_columns)
+
+    # 10 fold cross validation
+    train_size = len(train)
+    k = 10
+    test_index_generator = cross_validation.k_fold_cross_validation(train_size, k)
+    fold = 0
+    train_accuracy = 0
+    test_accuracy = 0
+    train_mse = 0
+    test_mse = 0
+
+    for start, end in test_index_generator:
+        train_left = train[range(0, start)]
+        train_right = train[range(end, train_size)]
+        k_fold_train = np.vstack((train_left, train_right))
+        test = train[range(start, end)]
+
+        target_left = target[range(0, start)]
+        target_right = target[range(end, train_size)]
+        train_target = np.append(target_left, target_right)
+        test_target = target[range(start, end)]
+
+        cf = LinearRegression()
+        cf = cf.fit(k_fold_train, train_target)
+
+        print '=============Train Data Result============'
+        predict_train = cf.predict(k_fold_train)
+        cm = confusion_matrix(train_target, predict_train)
+        print "confusion matrix: TN: %s, FP: %s, FN: %s, TP: %s" % (cm[0, 0], cm[0, 1], cm[1, 0], cm[1, 1])
+        er, acc, fpr, tpr = confusion_matrix_analysis(cm)
+        print 'Error rate: %f, accuracy: %f, FPR: %f, TPR: %f' % (er, acc, fpr, tpr)
+        train_accuracy += acc
+        print "mse: ", mse(predict_train, train_target), " rmse: ", rmse(predict_train, train_target), " mae: ", mae(predict_train,
+                                                                                                     train_target)
+        train_mse += mse(predict_train, train_target)
+
+
+        print '=============Test Data Result============'
+        predict_test = cf.predict(test)
+        cm = confusion_matrix(test_target, predict_test)
+        print "confusion matrix: TN: %s, FP: %s, FN: %s, TP: %s" % (cm[0, 0], cm[0, 1], cm[1, 0], cm[1, 1])
+        er, acc, fpr, tpr = confusion_matrix_analysis(cm)
+        print 'Error rate: %f, accuracy: %f, FPR: %f, TPR: %f' % (er, acc, fpr, tpr)
+        test_accuracy += acc
+        fold += 1
+        print "mse: ", mse(predict_test, test_target), " rmse: ", rmse(predict_test, test_target), " mae: ", mae(predict_test,
+                                                                                                     test_target)
+        test_mse += mse(predict_test, test_target)
+
+    print "Average train acc: %f, average test acc: %f" % (train_accuracy / fold, test_accuracy / fold)
+    print "Average train mse: %f, average test mse: %f" % (train_mse / fold, test_mse / fold)
+
+
+def main():
+    if sys.argv[1] == "housing":
+        housing()
+    elif sys.argv[1] == "spam":
+        spam()
+    else:
+        print "Invalid dataset please use [housing] or [spam]."
 
 if __name__ == '__main__':
     main()

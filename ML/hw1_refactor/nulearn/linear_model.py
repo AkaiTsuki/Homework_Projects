@@ -16,3 +16,18 @@ class LinearRegression(object):
 
     def predict(self, test):
         return test.dot(self.coeff)
+
+
+class LogisticRegression(LinearRegression):
+    def __init__(self):
+        super(LogisticRegression, self).__init__()
+
+    def predict(self, test):
+        predict_vals = test.dot(self.coeff)
+        predict_vals = 1.0 / (1 + np.exp(-predict_vals))
+        for i in range(len(predict_vals)):
+            if predict_vals[i] < 0.5:
+                predict_vals[i] = 0
+            else:
+                predict_vals[i] = 1
+        return predict_vals

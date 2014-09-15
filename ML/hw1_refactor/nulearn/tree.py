@@ -46,7 +46,7 @@ class BaseTree:
         return self
 
     def build_tree(self, train, target, features, level):
-        logging.info("Train data size: %d, feature length: %d", len(train), len(features))
+        logging.debug("Train data size: %d", len(train))
 
         if self.is_all_same_label(target):
             return TreeNode(None, None, self.total_features, target[0], level)
@@ -58,8 +58,9 @@ class BaseTree:
             return TreeNode(None, None, self.total_features, self.majority_vote(target), level)
 
         (f, s) = self.find_best_split_feature(train, target, features)
-        logging.info("(best_feature, split_value) = (%d, %f)", f, s)
-        if f is None:
+        logging.debug("(best_feature, split_value) = (%s, %s)", f, s)
+        if f is None or s is None:
+            logging.warn("Selected feature's split value is None: (%s, %s)", f, s)
             return TreeNode(None, None, self.total_features, self.majority_vote(target), level)
 
         left_train = train[train[:, f] <= s]
@@ -67,7 +68,7 @@ class BaseTree:
         left_target = target[train[:, f] <= s]
         right_target = target[train[:, f] > s]
 
-        logging.info("data split[left = %d, right = %d]", len(left_target), len(right_target))
+        logging.debug("data split[left = %d, right = %d]", len(left_target), len(right_target))
 
         if len(left_train) == 0:
             left_tree = TreeNode(None, None, self.total_features, self.majority_vote(target), level)
@@ -84,18 +85,19 @@ class BaseTree:
     def find_best_split_feature(self, train, target, features):
         best_feature = None
         best_split_value = None
-        max_info_gain = -float('inf')
+        max_score = -float('inf')
         score_d = self.measure(target)
 
         for f in features:
-            (split, info_gain) = self.find_best_split_on_feature(train[:, f], target, score_d)
-            if max_info_gain <= info_gain:
-                max_info_gain = info_gain
+            (split, score) = self.find_best_split_on_feature(train[:, f], target, score_d)
+            # logging.debug("(feature, split, score): (%s, %s, %s)", f, split, score)
+            if max_score <= score:
+                max_score = score
                 best_feature = f
                 best_split_value = split
         return best_feature, best_split_value
 
-    def find_best_split_on_feature(self, feature_vals, target, entropy_d):
+    def find_best_split_on_feature(self, feature_vals, target, parent_score):
         max_score = -float('inf')
         best_split_val = None
         sorted_features, sorted_target = self.get_sorted_feature_and_target(feature_vals, target)
@@ -106,7 +108,7 @@ class BaseTree:
             split = (sorted_features[i] + sorted_features[i - 1]) / 2.0
             left = sorted_target[:i]
             right = sorted_target[i:]
-            score = self.measure_on_children(left, right, sorted_target, entropy_d)
+            score = self.measure_on_children(left, right, sorted_target, parent_score)
             if max_score <= score:
                 max_score = score
                 best_split_val = split

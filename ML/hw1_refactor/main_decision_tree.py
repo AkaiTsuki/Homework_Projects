@@ -12,6 +12,7 @@ from nulearn.dataset import load_boston_house
 from nulearn.tree import print_tree
 import numpy as np
 import logging
+import sys
 
 
 def decision_tree():
@@ -24,6 +25,8 @@ def decision_tree():
     fold = 0
     train_accuracy = 0
     test_accuracy = 0
+    train_mse = 0
+    test_mse = 0
 
     for start, end in test_index_generator:
         train_left = train[range(0, start)]
@@ -42,21 +45,31 @@ def decision_tree():
         print_tree(cf.root)
 
         print '=============Train Data Result============'
-        cm = confusion_matrix(train_target, cf.predict(k_fold_train))
-        print "confusion matrix: ", cm
+        predict_train = cf.predict(k_fold_train)
+        cm = confusion_matrix(train_target, predict_train)
+        print "confusion matrix: TN: %s, FP: %s, FN: %s, TP: %s" % (cm[0, 0], cm[0, 1], cm[1, 0], cm[1, 1])
         er, acc, fpr, tpr = confusion_matrix_analysis(cm)
         print 'Error rate: %f, accuracy: %f, FPR: %f, TPR: %f' % (er, acc, fpr, tpr)
         train_accuracy += acc
+        print "mse: ", mse(predict_train, train_target), " rmse: ", rmse(predict_train, train_target), " mae: ", mae(predict_train,
+                                                                                                     train_target)
+        train_mse += mse(predict_train, train_target)
 
         print '=============Test Data Result============'
-        cm = confusion_matrix(test_target, cf.predict(test))
-        print "confusion matrix: ", cm
+        predict_test = cf.predict(test)
+        cm = confusion_matrix(test_target, predict_test)
+        print "confusion matrix: TN: %s, FP: %s, FN: %s, TP: %s" % (cm[0, 0], cm[0, 1], cm[1, 0], cm[1, 1])
         er, acc, fpr, tpr = confusion_matrix_analysis(cm)
         print 'Error rate: %f, accuracy: %f, FPR: %f, TPR: %f' % (er, acc, fpr, tpr)
         test_accuracy += acc
+        print "mse: ", mse(predict_test, test_target), " rmse: ", rmse(predict_test, test_target), " mae: ", mae(predict_test,
+                                                                                                     test_target)
+        test_mse += mse(predict_test, test_target)
+
         fold += 1
 
     print "Average train acc: %f, average test acc: %f" % (train_accuracy / fold, test_accuracy / fold)
+    print "Average train mse: %f, average test mse: %f" % (train_mse / fold, test_mse / fold)
 
 
 def regression_tree():
@@ -82,9 +95,12 @@ def regression_tree():
 
 def main():
     logging.basicConfig(format="%(asctime)s - %(levelname)s - %(funcName)s - %(message)s", level=logging.DEBUG)
-    # regression_tree()
-    decision_tree()
-
+    if sys.argv[1] == "housing":
+        regression_tree()
+    elif sys.argv[1] == "spam":
+        decision_tree()
+    else:
+        print "Invalid dataset, please use [housing] or [spam]."
 
 if __name__ == '__main__':
     main()
