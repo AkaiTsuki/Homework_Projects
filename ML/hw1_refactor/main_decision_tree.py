@@ -15,6 +15,18 @@ import logging
 import sys
 
 
+def decision_tree_all_data():
+    train, target = load_spambase()
+    cf = tree.DecisionTree()
+    cf = cf.fit(train, target, 5)
+    print_tree(cf.root)
+    predicts = cf.predict(train)
+    cm = confusion_matrix(target,predicts)
+    print "confusion matrix: TN: %s, FP: %s, FN: %s, TP: %s" % (cm[0, 0], cm[0, 1], cm[1, 0], cm[1, 1])
+    er, acc, fpr, tpr = confusion_matrix_analysis(cm)
+    print 'Error rate: %f, accuracy: %f, FPR: %f, TPR: %f' % (er, acc, fpr, tpr)
+
+
 def decision_tree():
     train, target = load_spambase()
 
@@ -92,6 +104,9 @@ def regression_tree():
     predict = classifier.predict(test)
     print "mse: ", mse(predict, test_target), " rmse: ", rmse(predict, test_target), " mae: ", mae(predict, test_target)
 
+def main1():
+    logging.basicConfig(format="%(asctime)s - %(levelname)s - %(funcName)s - %(message)s", level=logging.DEBUG)
+    decision_tree_all_data()
 
 def main():
     logging.basicConfig(format="%(asctime)s - %(levelname)s - %(funcName)s - %(message)s", level=logging.DEBUG)

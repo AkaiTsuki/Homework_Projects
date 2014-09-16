@@ -1,10 +1,10 @@
 __author__ = 'jiachiliu'
 
+from nulearn.preprocessing import append_new_column
 from nulearn.preprocessing import normalize
 from nulearn.dataset import load_boston_house
 from nulearn.dataset import load_spambase
 from nulearn.linear_model import LinearRegression
-from nulearn.linear_model import LogisticRegression
 from nulearn.validation import mae
 from nulearn.validation import mse
 from nulearn.validation import rmse
@@ -21,6 +21,8 @@ def housing():
     normalize_columns = [0, 1, 2, 6, 7, 9, 10, 11, 12]
     normalize(train, normalize_columns)
     normalize(test, normalize_columns)
+    train = append_new_column(train, 1.0, 0)
+    test = append_new_column(test, 1.0, 0)
 
     lr = LinearRegression()
     lr.fit(train, train_target)
@@ -39,6 +41,7 @@ def spam():
 
     normalize_columns = [55, 56]
     normalize(train, normalize_columns)
+    train = append_new_column(train, 1.0, 0)
 
     # 10 fold cross validation
     train_size = len(train)
@@ -71,10 +74,10 @@ def spam():
         er, acc, fpr, tpr = confusion_matrix_analysis(cm)
         print 'Error rate: %f, accuracy: %f, FPR: %f, TPR: %f' % (er, acc, fpr, tpr)
         train_accuracy += acc
-        print "mse: ", mse(predict_train, train_target), " rmse: ", rmse(predict_train, train_target), " mae: ", mae(predict_train,
-                                                                                                     train_target)
+        print "mse: ", mse(predict_train, train_target), " rmse: ", rmse(predict_train, train_target), " mae: ", mae(
+            predict_train,
+            train_target)
         train_mse += mse(predict_train, train_target)
-
 
         print '=============Test Data Result============'
         predict_test = cf.predict(test)
@@ -84,8 +87,9 @@ def spam():
         print 'Error rate: %f, accuracy: %f, FPR: %f, TPR: %f' % (er, acc, fpr, tpr)
         test_accuracy += acc
         fold += 1
-        print "mse: ", mse(predict_test, test_target), " rmse: ", rmse(predict_test, test_target), " mae: ", mae(predict_test,
-                                                                                                     test_target)
+        print "mse: ", mse(predict_test, test_target), " rmse: ", rmse(predict_test, test_target), " mae: ", mae(
+            predict_test,
+            test_target)
         test_mse += mse(predict_test, test_target)
 
     print "Average train acc: %f, average test acc: %f" % (train_accuracy / fold, test_accuracy / fold)
@@ -99,6 +103,7 @@ def main():
         spam()
     else:
         print "Invalid dataset please use [housing] or [spam]."
+
 
 if __name__ == '__main__':
     main()

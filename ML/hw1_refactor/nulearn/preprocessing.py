@@ -1,5 +1,7 @@
 __author__ = 'jiachiliu'
 
+import numpy as np
+
 
 def normalize(data, columns=None):
     if columns is None:
@@ -7,6 +9,9 @@ def normalize(data, columns=None):
     else:
         ZeroMeanUnitVariation(columns).scale(data)
 
+
+def append_new_column(data, values, pos):
+        return np.insert(data, pos, values=values, axis=1)
 
 class ZeroMeanUnitVariation:
     def __init__(self, cols):
