@@ -161,7 +161,7 @@ public class AirlineDelayMapReducer {
 			float diverted = Float.parseFloat(entry[DIVERTED]);
 			int year = Integer.parseInt(entry[YEAR]);
 
-			return year == 2008 && cancelled == 0.0 && diverted == 0.0;
+			return year == 2008 && cancelled == 0.0 && entry[ARR_DELAY_MINUTES].length() > 0;
 		}
 	}
 
@@ -198,7 +198,7 @@ public class AirlineDelayMapReducer {
 					count += 1;
 				}
 			}
-			averages[currentMonth - 1] = (int) (sum / count);
+			averages[currentMonth - 1] = (int) Math.ceil((sum / count));
 			delays.set(key.getAirlineId().get() + ", "
 					+ getDelayString(averages));
 			context.write(NullWritable.get(), delays);
